@@ -1,0 +1,27 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Transform: 'Aliyun::Serverless-2018-04-03'
+Resources:
+  secureSecrets:
+    Type: 'Aliyun::Serverless::Service'
+    Properties:
+      Description: This is secureSecrets service
+      Policies:
+        - Version: '1'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'kms:Decrypt'
+              Resource: '*'
+    hello:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Initializer: index.initializer
+        InitializationTimeout: 10
+        Handler: index.handler
+        Runtime: python3
+        Timeout: 60
+        MemorySize: 512
+        CodeUri: secureSecrets/hello
+        EnvironmentVariables:
+          SecureUserName: YzhiNzRlYTctNTUxYS00YTUzLWE0YzQtZjJkYmQ4NmVjM2FjaC9aYzBSeDRvNGRmbW4rUURlajNMU2luMFMzS0c5VmZBQUFBQUFBQUFBQmlXd1d3K1VuQWNaYXBoM0xZd0dIUmR4bCtqZz09
+          SecurePassword: YzhiNzRlYTctNTUxYS00YTUzLWE0YzQtZjJkYmQ4NmVjM2FjaUJTU2l4clVQK00xZVFtTXdCaCtCYnZSOENGYVpQMjhBQUFBQUFBQUFBQ2pRbk42MUlEKzREeUpJdWpzb2xGbitjbFdXSjdZ
