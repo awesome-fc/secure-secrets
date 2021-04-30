@@ -15,8 +15,10 @@ class KMSClient(object):
         local = bool(os.getenv('local', ""))
         if local:
             acs_creds = AccessKeyCredential(access_key_id, access_key_secret)
+            self.endpoint = 'kms.{}.aliyuncs.com'.format(region)
         else:
             acs_creds = StsTokenCredential(access_key_id, access_key_secret, security_token)
+            self.endpoint = 'kms-vpc.{}.aliyuncs.com'.format(region)
         self.clt = client.AcsClient(region_id=region, credential=acs_creds)
 
     def decrypt(self, cipherblob):
@@ -27,6 +29,7 @@ class KMSClient(object):
             try:
                 request = DecryptRequest.DecryptRequest()
                 request.set_CiphertextBlob(cipherblob)
+                request.set_endpoint(self.endpoint)
                 response = self.clt.do_action_with_exception(request)
                 break
             except ClientException as e:
@@ -53,6 +56,7 @@ class KMSClient(object):
         request = EncryptRequest.EncryptRequest()
         request.set_KeyId(key_id)
         request.set_Plaintext(plaintext)
+        request.set_endpoint(self.endpoint)
         response = self.clt.do_action_with_exception(request)
         res = json.loads(response)
         return res['CiphertextBlob']
